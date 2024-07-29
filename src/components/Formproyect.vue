@@ -2,6 +2,7 @@
     import { defineComponent,ref, onMounted } from 'vue';
     import proyect from '@/services/ServiceFormproyecto';
     export default defineComponent({
+        
         name:"proyect",
         props:{},
         emits:['go_to_task','go_to_useredit'],
@@ -96,16 +97,17 @@
                             class="mt-5"
                             color="success"
                             @click="register_proyect"
-                            >Registrar</v-btn>
+                            >Registrar
+                        </v-btn>
                 <v-data-table 
                     :items="data" 
                     item-value="Name"
                 >
 
                     <template v-slot:item.delete  = "{ value }">
-                        <v-icon class="me-2" @click="delete_proyect(value)">mdi-delete</v-icon>
-                        <v-icon class="me-2" @click="go_task(value)">mdi-pencil</v-icon>
-                        <v-icon class="me-2" @click="go_edit_user(value)">mdi-account-edit</v-icon>
+                        <v-icon class="me-2 text-red" @click="delete_proyect(value)">mdi-delete</v-icon>
+                        <v-icon class="me-2 text-blue" @click="go_task(value)">mdi-pencil</v-icon>
+                        <v-icon class="me-2 text-yellow" @click="go_edit_user(value)">mdi-account-edit</v-icon>
                     </template>
 
                 </v-data-table>

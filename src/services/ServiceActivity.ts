@@ -18,12 +18,12 @@ class ServiceActivity {
         } 
         return this.out;
     }
-    async Sremove(idactivity:string,idtask:string):Promise<Object>{
+    async Sremove(idactivity:string,idtask:string,idproyect:string):Promise<Object>{
         let obj:Object = JSON.parse(localStorage.getItem('todolist')); 
         let url = obj['route'] + 'activity_delete';
         let opt = {
             method:"delete",
-            body:JSON.stringify({'idactivity':idactivity,'task_idtask':idtask}),
+            body:JSON.stringify({'idactivity':idactivity,'task_idtask':idtask,'proyect_idproyect':idproyect}),
             headers:{
                         'content-type':"application/json",
                         Authorization : 'Bearer ' +  obj['token']
@@ -54,7 +54,7 @@ class ServiceActivity {
         return await this.set_response(response);
     }
     
-    async Smodify(detailActivity:string,start:string,finish:string,idactivity:string,task_idtask:string):Promise<Object>{
+    async Smodify(detailActivity:string,start:string,finish:string,idactivity:string,task_idtask:string,idproyect:string):Promise<Object>{
         let obj:Object = JSON.parse(localStorage.getItem('todolist'));
         let url:string = obj['route'] + 'activity_modify';
         let opt:Object = {
@@ -63,6 +63,7 @@ class ServiceActivity {
                 'detailActivity':detailActivity,
                 'start':start,
                 'idactivity':idactivity,
+                'proyect_idproyect':idproyect,
                 'task_idtask':task_idtask,
                 'finish':finish
             }),

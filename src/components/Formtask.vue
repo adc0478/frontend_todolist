@@ -19,7 +19,7 @@
             function create_table(list:[]):Object{
                 let out = [];
                 list.forEach((element)=>{
-                    out.push({'Tarea':element['nameTask'],'idtask':element['idtask'] + "#" + element['nameTask']});
+                    out.push({'pendiente':element['acc'],'Tarea':element['nameTask'],'action':element['idtask'] + "#" + element['nameTask']});
                 })
                 return out;
             }
@@ -124,10 +124,14 @@
                     :items="data" 
                     item-value="Name"
                 >
+                    <template v-slot:item.pendiente = "{ value }">
+                        <v-icon class="me-2 text-red" v-if="value != 0">mdi-alert</v-icon>
+                        <v-icon class="me-2 text-green" v-if="value == 0">mdi-check</v-icon>{{ value }}
+                    </template>
 
-                    <template v-slot:item.idtask = "{ value }">
-                        <v-icon class="me-2" @click="remove(value)">mdi-delete</v-icon>
-                        <v-icon class="me-2" @click="edit(value)">mdi-pencil</v-icon>
+                    <template v-slot:item.action = "{ value }">
+                        <v-icon class="me-2 text-red" @click="remove(value)">mdi-delete</v-icon>
+                        <v-icon class="me-2 text-blue" @click="edit(value)">mdi-pencil</v-icon>
                         <v-icon class="me-2" @click="activity(value)">mdi-alarm-check</v-icon>
                     </template>
 

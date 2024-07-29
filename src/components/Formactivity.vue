@@ -18,13 +18,23 @@
             let idactivity = ref("");
             function create_table(data:[]):Object{
                 let values = [];
+                let init:string = ""
+                let end:string = ""
                 data.forEach((element)=>{
+                    if (element['start'] != null) {
+                       init = element['start']; 
+                    }
+                    if (element['finish'] != null){
+                        end = element['finish'];
+                    }
                     values.push({
                         'Activity':element['detailActivity'],
-                        'Start':element['start'],
-                        'finish':element['finish'],
-                        'action':element['idactivity'] + "#" + element['detailActivity'] + "#" + element['start'] + "#" + element['finish']
+                        'Start':init,
+                        'finish':end,
+                        'action':element['idactivity'] + "#" + element['detailActivity'] + "#" + init + "#" + end
                     })    
+                    init ="";
+                    end ="";
                 })  
                 return values;
 
@@ -40,7 +50,7 @@
             async function remove(data:string){
                 let activity = new Serviceactivity(); 
                 let data_array = data.split("#");
-                let value:Object = await activity.Sremove(data_array[0],props.idtask);
+                let value:Object = await activity.Sremove(data_array[0],props.idtask,props.idproyect);
                 set_form(value);
             }
             async function create(){
@@ -64,7 +74,7 @@
             }
             async function modify(){
                 let activity = new Serviceactivity(); 
-                let value:Object = await activity.Smodify(detail.value,start.value,finish.value,idactivity.value,props.idtask);
+                let value:Object = await activity.Smodify(detail.value,start.value,finish.value,idactivity.value,props.idtask,props.idproyect);
                set_form(value);
                clear_form();
             }
@@ -161,7 +171,7 @@
                     :items="data" 
                 >
                     <template v-slot:item.action = "{ value }">
-                        <v-icon class="me-2" @click="remove(value)">mdi-delete</v-icon>
+                        <v-icon class="me-2 text-red" @click="remove(value)">mdi-delete</v-icon>
                         <v-icon class="me-2" @click="edit(value)">mdi-pencil</v-icon>
                     </template>
                 </v-data-table>

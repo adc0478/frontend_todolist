@@ -1,8 +1,14 @@
 <script charset="utf-8" lang="ts">
     import { defineComponent,ref,onMounted} from 'vue';
+    import UserList from './Userlist.vue';
+    import RoleList from './Rolelist.vue';
     import servicesUser from '@/services/ServiceUserproyect';
 
     export default defineComponent({
+       components: {
+            UserList,
+            RoleList
+       },
        name:'Formuseredit',
        props:{
         idproyect:String
@@ -16,16 +22,29 @@
         let info = ref(false);
         let iduserproyect = ref('');
         let data = ref([]);
+        let list_user = ref([]);
         function create_table(list:[]):object{
            let out = [];
            list.forEach((element)=>{
                 out.push({'name':element['name'],'id_user':element['id'],'type_user':element['type_user'],'id_user_proyect':element['id_user_proyect']})
            })
            return out;
-        } 
+        }
+        function create_list_user_active(list:[]):object{
+            let out = [];
+            list.forEach((element)=>{
+                if (element['type_user'] != null){
+                   if ((element['type_user'] !="-")){
+                        out.push({'name':element['name']})
+                   }
+                }
+           })
+           return out;
+        }
         async function list_all(){
             let services = new servicesUser();
             let values = await services.get_user(props.idproyect);
+            list_user.value = create_list_user_active(values['data']);
             data.value = create_table(values['data']);
             clear_form(); 
         }
@@ -59,18 +78,28 @@
             iduserproyect.value ="";
 
         }
+        function additem(value:string){
+           if (type.value === ""){
+                type.value = value;
+           }else{
+                if (!type.value.includes(value)){
+                    type.value = type.value + "," + value;
+                }
+           } 
+        }
         function set_form(value:Object){
                 error.value = value['error'];
                 error_data.value = value['error_data'];
                 info.value = value['info'];
                 if (info.value){
                     data.value = create_table(value['data']);
+                    list_user.value = create_list_user_active(value['data']);
                 }
                 if (info.value){
                     clear_form();
                 }
             }
-        return {id_user,type,error,error_data,info,iduserproyect,data,store,modify,clear_form,selection};
+        return {id_user,type,error,error_data,info,iduserproyect,data,store,modify,clear_form,selection,list_user,additem};
        }
     })
     
@@ -79,18 +108,24 @@
     <v-form class="mx-auto">
             <h2 class="mx-4">Editar permisos de usuario</h2>
             <v-container>
-                
-             <v-select
-                v-model="id_user"
-                :items="data"
-                item-title="name"
-                item-value="id_user"
-                label="Select"
-                single-line
-                :item-props="selection"
-              ></v-select>
+                    <v-row>
+                        <v-col cols="11">
+                            <v-select
+                                v-model="id_user"
+                                :items="data"
+                                item-title="name"
+                                item-value="id_user"
+                                label="Select"
+                                single-line
+                                :item-props="selection"
+                              ></v-select>
 
-                <v-text-field
+                        </v-col>
+                        <v-col cols="1">
+                             <RoleList @addItem="additem"/>
+                        </v-col>
+                    </v-row>
+            <v-text-field
                     v-model="type"
                     laber="Tipo permiso"
                     variant="outlined"
@@ -119,6 +154,8 @@
                         color="red"
                         @click="clear_form"
                         >Cancelar</v-btn>
+                     <UserList  :info="list_user"/>
+                     
                         <div class="mt-5">
                              <v-alert
                                 v-bind:text="error_data" 
